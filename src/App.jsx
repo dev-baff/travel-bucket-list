@@ -1,34 +1,57 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Header from './components/Header'
+import HomePage from './components/HomePage'
+import DestinationDetails from './components/DestinationDetails'
+import BucketList from './components/BucketList'
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  // Global bucket list state shared across all pages
+  const [bucketList, setBucketList] = useState([])
+
+  // Add a country to the bucket list if it doesn't already exist
+  const addToBucketList = (country) => {
+    if (!bucketList.find((item) => item.cca3 === country.cca3)) {
+      setBucketList([...bucketList, { 
+        ...country, 
+        visited: false, 
+        expenses: { flight: 0, accommodation: 0, activities: 0 } 
+      }])
+    }
+  }
+
+  // Remove a country from the bucket list by its unique code
+  const removeFromBucketList = (cca3) => {
+    setBucketList(bucketList.filter((item) => item.cca3 !== cca3))
+  }
+
+  // Toggle the visited status of a destination
+  const toggleVisited = (cca3) => {
+    setBucketList(bucketList.map((item) =>
+      item.cca3 === cca3 ? { ...item, visited: !item.visited } : item
+    ))
+  }
+
+  // Update the expenses for a specific destination
+  const updateExpenses = (cca3, expenses) => {
+    setBucketList(bucketList.map((item) =>
+      item.cca3 === cca3 ? { ...item, expenses } : item
+    ))
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Router>
+      {/* Header is shown on all pages */}
+      <Header bucketListCount={bucketList.length} />
+      <Routes>
+        {/* Home page - search and browse countries */}
+        <Route path="/" element={<HomePage addToBucketList={addToBucketList} />} />
+        {/* Destination detail page - view country info and photos */}
+        <Route path="/destination/:id" element={<DestinationDetails addToBucketList={addToBucketList} />} />
+        {/* Bucket list page - manage saved destinations and expenses */}
+        <Route path="/bucket-list" element={<BucketList bucketList={bucketList} removeFromBucketList={removeFromBucketList} toggleVisited={toggleVisited} updateExpenses={updateExpenses} />} />
+      </Routes>
+    </Router>
   )
 }
 
