@@ -7,10 +7,12 @@ function CountryCard({ country }) {
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300 p-6 flex flex-col items-center text-center">
-      {/* Country flag emoji */}
-      <div className="text-6xl mb-4">
-        {country.flag}
-      </div>
+      {/* Country flag image from REST Countries API */}
+      <img
+        src={country.flags.png}
+        alt={`${country.name.common} flag`}
+        className="w-24 h-16 object-cover rounded mb-4 shadow-sm"
+      />
 
       {/* Country name and capital */}
       <h2 className="text-lg font-bold text-gray-800">{country.name.common}</h2>
@@ -19,7 +21,7 @@ function CountryCard({ country }) {
       {/* View Details button links to destination detail page */}
       <Link
         to={`/destination/${country.cca3}`}
-        className="w-full bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors duration-300"
+        className="w-full bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors duration-300 text-center"
       >
         View Details
       </Link>
