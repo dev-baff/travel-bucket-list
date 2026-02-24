@@ -3,19 +3,27 @@ import Header from './components/Header'
 import HomePage from './components/HomePage'
 import DestinationDetails from './components/DestinationDetails'
 import BucketList from './components/BucketList'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 function App() {
-  // Global bucket list state shared across all pages
-  const [bucketList, setBucketList] = useState([])
+  // Load bucket list from localStorage on first render
+  const [bucketList, setBucketList] = useState(() => {
+    const saved = localStorage.getItem('bucketList')
+    return saved ? JSON.parse(saved) : []
+  })
+
+  // Save bucket list to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('bucketList', JSON.stringify(bucketList))
+  }, [bucketList])
 
   // Add a country to the bucket list if it doesn't already exist
   const addToBucketList = (country) => {
     if (!bucketList.find((item) => item.cca3 === country.cca3)) {
-      setBucketList([...bucketList, { 
-        ...country, 
-        visited: false, 
-        expenses: { flight: 0, accommodation: 0, activities: 0 } 
+      setBucketList([...bucketList, {
+        ...country,
+        visited: false,
+        expenses: { flight: 0, accommodation: 0, activities: 0 }
       }])
     }
   }
