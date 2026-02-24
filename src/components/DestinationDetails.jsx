@@ -9,6 +9,8 @@ function DestinationDetails({ addToBucketList }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [added, setAdded] = useState(false)
+  // Track which photo is selected for lightbox view
+  const [selectedPhoto, setSelectedPhoto] = useState(null)
 
   // Fetch country data from REST Countries API using country code
   useEffect(() => {
@@ -142,7 +144,7 @@ function DestinationDetails({ addToBucketList }) {
           Destination Photos
         </h2>
 
-        {/* Photo gallery grid */}
+        {/* Photo gallery grid - click to open lightbox */}
         {photos.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {photos.map((photo, index) => (
@@ -150,13 +152,13 @@ function DestinationDetails({ addToBucketList }) {
                 key={photo.id}
                 src={photo.urls.regular}
                 alt={`${country.name.common} photo ${index + 1}`}
-                className="w-full h-48 object-cover rounded-lg shadow-sm"
+                className="w-full h-48 object-cover rounded-lg shadow-sm cursor-pointer hover:opacity-90 hover:scale-105 transition-all duration-300"
+                onClick={() => setSelectedPhoto(photo.urls.full)}
               />
             ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            {/* Placeholder boxes if no photos available */}
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
@@ -184,6 +186,31 @@ function DestinationDetails({ addToBucketList }) {
         </div>
 
       </div>
+
+      {/* Lightbox overlay - shows when a photo is clicked */}
+      {selectedPhoto && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 px-4"
+          onClick={() => setSelectedPhoto(null)}
+        >
+          {/* Close button */}
+          <button
+            className="absolute top-4 right-6 text-white text-4xl font-bold hover:text-gray-300"
+            onClick={() => setSelectedPhoto(null)}
+          >
+            ✕
+          </button>
+
+          {/* Full size photo */}
+          <img
+            src={selectedPhoto}
+            alt="Full size destination photo"
+            className="max-w-full max-h-screen rounded-lg shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+
     </div>
   )
 }
