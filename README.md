@@ -12,14 +12,18 @@ Coming soon...
 - REST Countries API
 - Unsplash API
 
-## ✨ Features (In Progress)
+## ✨ Features
 - [x] Search for countries by name
+- [x] Popular destinations shown on home page
 - [x] View country details (capital, population, currency, languages)
 - [x] View destination photos via Unsplash
+- [x] Click photos to view in fullscreen lightbox
 - [x] Add destinations to bucket list
-- [ ] Track expenses per destination (flight, accommodation, activities)
-- [ ] Mark destinations as visited/not visited
-- [ ] Persist data with localStorage
+- [x] Track expenses per destination (flight, accommodation, activities)
+- [x] Mark destinations as visited/not visited
+- [x] View total budget across all destinations
+- [x] Persist data with localStorage
+- [x] Fully responsive on mobile and desktop
 
 ## 🚀 Getting Started
 
@@ -54,10 +58,12 @@ Coming soon...
 src/
 ├── components/
 │   ├── Header.jsx
+│   ├── Footer.jsx
 │   ├── HomePage.jsx
 │   ├── CountryCard.jsx
 │   ├── DestinationDetails.jsx
-│   └── BucketList.jsx
+│   ├── BucketList.jsx
+│   └── BucketListItem.jsx
 ├── App.jsx
 ├── main.jsx
 └── index.css
