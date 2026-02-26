@@ -3,6 +3,7 @@ import Header from './components/Header'
 import HomePage from './components/HomePage'
 import DestinationDetails from './components/DestinationDetails'
 import BucketList from './components/BucketList'
+import Footer from './components/Footer'
 import { useState, useEffect } from 'react'
 
 function App() {
@@ -49,16 +50,26 @@ function App() {
 
   return (
     <Router>
-      {/* Header is shown on all pages */}
-      <Header bucketListCount={bucketList.length} />
-      <Routes>
-        {/* Home page - search and browse countries */}
-        <Route path="/" element={<HomePage addToBucketList={addToBucketList} />} />
-        {/* Destination detail page - view country info and photos */}
-        <Route path="/destination/:id" element={<DestinationDetails addToBucketList={addToBucketList} />} />
-        {/* Bucket list page - manage saved destinations and expenses */}
-        <Route path="/bucket-list" element={<BucketList bucketList={bucketList} removeFromBucketList={removeFromBucketList} toggleVisited={toggleVisited} updateExpenses={updateExpenses} />} />
-      </Routes>
+      {/* Flex column layout to push footer to bottom */}
+      <div className="flex flex-col min-h-screen">
+        {/* Header shown on all pages */}
+        <Header bucketListCount={bucketList.length} />
+        
+        {/* Main content grows to fill available space */}
+        <main className="flex-grow">
+          <Routes>
+            {/* Home page - search and browse countries */}
+            <Route path="/" element={<HomePage addToBucketList={addToBucketList} />} />
+            {/* Destination detail page - view country info and photos */}
+            <Route path="/destination/:id" element={<DestinationDetails addToBucketList={addToBucketList} />} />
+            {/* Bucket list page - manage saved destinations and expenses */}
+            <Route path="/bucket-list" element={<BucketList bucketList={bucketList} removeFromBucketList={removeFromBucketList} toggleVisited={toggleVisited} updateExpenses={updateExpenses} />} />
+          </Routes>
+        </main>
+
+        {/* Footer shown on all pages */}
+        <Footer />
+      </div>
     </Router>
   )
 }
