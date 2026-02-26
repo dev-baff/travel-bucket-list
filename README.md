@@ -3,7 +3,7 @@
 A responsive web application that allows users to search for countries, view detailed destination information, and manage a personal travel bucket list with expense tracking.
 
 ## 🌐 Live Demo
-Coming soon...
+[https://travel-bucket-list-baff.netlify.app](https://travel-bucket-list-baff.netlify.app)
 
 ## 🛠️ Tech Stack
 - React JS
