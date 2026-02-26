@@ -1,5 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import CountryCard from './CountryCard'
+
+// List of popular destinations to show by default
+const POPULAR_COUNTRIES = ['Japan', 'France', 'Brazil', 'Australia', 'Egypt', 'Italy', 'Ghana', 'Canada']
 
 // Home page component with search bar and country cards
 function HomePage({ addToBucketList }) {
@@ -9,6 +12,31 @@ function HomePage({ addToBucketList }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [searched, setSearched] = useState(false)
+  const [popularCountries, setPopularCountries] = useState([])
+  const [popularLoading, setPopularLoading] = useState(true)
+
+  // Fetch popular destinations on page load
+  useEffect(() => {
+    const fetchPopular = async () => {
+      try {
+        // Fetch all popular countries in parallel
+        const results = await Promise.all(
+          POPULAR_COUNTRIES.map((name) =>
+            fetch(`https://restcountries.com/v3.1/name/${name}?fullText=true`)
+              .then((res) => res.json())
+              .then((data) => data[0])
+          )
+        )
+        setPopularCountries(results)
+      } catch (err) {
+        console.error('Failed to load popular destinations')
+      } finally {
+        setPopularLoading(false)
+      }
+    }
+
+    fetchPopular()
+  }, [])
 
   // Fetch countries from REST Countries API based on search query
   const handleSearch = async () => {
@@ -70,36 +98,74 @@ function HomePage({ addToBucketList }) {
         </div>
       </div>
 
-      {/* Results section */}
       <div className="container mx-auto px-4 py-10">
-        {/* Loading state */}
-        {loading && (
-          <p className="text-center text-gray-500 text-lg">Loading...</p>
+        {/* Search results section */}
+        {searched && (
+          <>
+            {/* Loading state */}
+            {loading && (
+              <p className="text-center text-gray-500 text-lg">Loading...</p>
+            )}
+
+            {/* Error message */}
+            {error && (
+              <p className="text-center text-red-500 text-lg">{error}</p>
+            )}
+
+            {/* Search results grid */}
+            {!loading && !error && countries.length > 0 && (
+              <>
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                  Search Results ({countries.length})
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {countries.map((country) => (
+                    <CountryCard
+                      key={country.cca3}
+                      country={country}
+                      addToBucketList={addToBucketList}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* No results message */}
+            {!loading && !error && countries.length === 0 && (
+              <p className="text-center text-gray-500 text-lg">
+                No countries found. Try searching for something else.
+              </p>
+            )}
+          </>
         )}
 
-        {/* Error message */}
-        {error && (
-          <p className="text-center text-red-500 text-lg">{error}</p>
-        )}
+        {/* Popular destinations section - shown before search */}
+        {!searched && (
+          <>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              Popular Destinations
+            </h2>
 
-        {/* Country cards grid */}
-        {!loading && !error && countries.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {countries.map((country) => (
-              <CountryCard
-                key={country.cca3}
-                country={country}
-                addToBucketList={addToBucketList}
-              />
-            ))}
-          </div>
-        )}
+            {/* Loading popular destinations */}
+            {popularLoading && (
+              <p className="text-center text-gray-500 text-lg">
+                Loading popular destinations...
+              </p>
+            )}
 
-        {/* No results message */}
-        {searched && !loading && !error && countries.length === 0 && (
-          <p className="text-center text-gray-500 text-lg">
-            No countries found. Try searching for something else.
-          </p>
+            {/* Popular destinations grid */}
+            {!popularLoading && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {popularCountries.map((country) => (
+                  <CountryCard
+                    key={country.cca3}
+                    country={country}
+                    addToBucketList={addToBucketList}
+                  />
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
