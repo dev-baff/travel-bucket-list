@@ -23,6 +23,7 @@ A responsive web application that allows users to search for countries, view det
 - [x] Mark destinations as visited/not visited
 - [x] View total budget across all destinations
 - [x] Persist data with localStorage
+- [x] Dark mode toggle
 - [x] Fully responsive on mobile and desktop
 
 ## 🚀 Getting Started
