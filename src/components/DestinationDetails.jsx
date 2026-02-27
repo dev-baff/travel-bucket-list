@@ -2,23 +2,20 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 
 // Destination details page showing country info, photos and add to bucket list button
-function DestinationDetails({ addToBucketList }) {
+function DestinationDetails({ addToBucketList, darkMode }) {
   const { id } = useParams()
   const [country, setCountry] = useState(null)
   const [photos, setPhotos] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [added, setAdded] = useState(false)
-  // Track which photo is selected for lightbox view
   const [selectedPhoto, setSelectedPhoto] = useState(null)
 
   // Fetch country data from REST Countries API using country code
   useEffect(() => {
     const fetchCountry = async () => {
       try {
-        const response = await fetch(
-          `https://restcountries.com/v3.1/alpha/${id}`
-        )
+        const response = await fetch(`https://restcountries.com/v3.1/alpha/${id}`)
         if (!response.ok) throw new Error('Country not found')
         const data = await response.json()
         setCountry(data[0])
@@ -29,11 +26,10 @@ function DestinationDetails({ addToBucketList }) {
         setLoading(false)
       }
     }
-
     fetchCountry()
   }, [id])
 
-  // Fetch photos from Unsplash API using country name
+  // Fetch photos from Unsplash API
   const fetchPhotos = async (countryName) => {
     try {
       const response = await fetch(
@@ -42,7 +38,6 @@ function DestinationDetails({ addToBucketList }) {
       const data = await response.json()
       setPhotos(data.results)
     } catch (err) {
-      // If photos fail to load, just show empty gallery
       setPhotos([])
     }
   }
@@ -76,62 +71,56 @@ function DestinationDetails({ addToBucketList }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500 text-lg">Loading...</p>
+      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <p className="text-gray-400 text-lg">Loading...</p>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <p className="text-red-500 text-lg">{error}</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
+    <div className={`min-h-screen px-4 py-8 ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="container mx-auto max-w-4xl">
 
         {/* Back to search link */}
-        <Link
-          to="/"
-          className="text-blue-500 hover:text-blue-700 flex items-center gap-1 mb-6"
-        >
+        <Link to="/" className="text-blue-500 hover:text-blue-400 flex items-center gap-1 mb-6">
           ← Back to Search
         </Link>
 
         {/* Country info card */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+        <div className={`rounded-lg shadow-sm border p-6 mb-8 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-            {/* Country flag */}
             <img
               src={country.flags.png}
               alt={`${country.name.common} flag`}
               className="w-32 h-24 object-cover rounded shadow-sm"
             />
-
-            {/* Country details */}
             <div>
-              <h1 className="text-3xl font-bold text-gray-800 mb-4">
+              <h1 className={`text-3xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                 {country.name.common.toUpperCase()}
               </h1>
               <div className="grid grid-cols-2 gap-x-8 gap-y-2">
                 <p className="text-gray-400">Capital:</p>
-                <p className="text-gray-800 font-medium">
+                <p className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                   {country.capital ? country.capital[0] : 'N/A'}
                 </p>
                 <p className="text-gray-400">Population:</p>
-                <p className="text-gray-800 font-medium">
+                <p className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                   {getPopulation(country.population)}
                 </p>
                 <p className="text-gray-400">Currency:</p>
-                <p className="text-gray-800 font-medium">
+                <p className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                   {getCurrency(country)}
                 </p>
                 <p className="text-gray-400">Languages:</p>
-                <p className="text-gray-800 font-medium">
+                <p className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                   {getLanguages(country)}
                 </p>
               </div>
@@ -139,12 +128,11 @@ function DestinationDetails({ addToBucketList }) {
           </div>
         </div>
 
-        {/* Destination photos section */}
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+        {/* Destination photos */}
+        <h2 className={`text-2xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
           Destination Photos
         </h2>
 
-        {/* Photo gallery grid - click to open lightbox */}
         {photos.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {photos.map((photo, index) => (
@@ -162,7 +150,7 @@ function DestinationDetails({ addToBucketList }) {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center"
+                className={`w-full h-48 rounded-lg flex items-center justify-center ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}
               >
                 <p className="text-gray-400">No photo available</p>
               </div>
@@ -176,9 +164,7 @@ function DestinationDetails({ addToBucketList }) {
             onClick={handleAddToBucketList}
             disabled={added}
             className={`px-8 py-3 rounded-full text-white font-semibold transition-colors duration-300 ${
-              added
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-green-500 hover:bg-green-600'
+              added ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'
             }`}
           >
             {added ? '✓ Added to Bucket List' : '+ Add to My Bucket List'}
@@ -187,21 +173,18 @@ function DestinationDetails({ addToBucketList }) {
 
       </div>
 
-      {/* Lightbox overlay - shows when a photo is clicked */}
+      {/* Lightbox overlay */}
       {selectedPhoto && (
         <div
           className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 px-4"
           onClick={() => setSelectedPhoto(null)}
         >
-          {/* Close button */}
           <button
             className="absolute top-4 right-6 text-white text-4xl font-bold hover:text-gray-300"
             onClick={() => setSelectedPhoto(null)}
           >
             ✕
           </button>
-
-          {/* Full size photo */}
           <img
             src={selectedPhoto}
             alt="Full size destination photo"
@@ -210,7 +193,6 @@ function DestinationDetails({ addToBucketList }) {
           />
         </div>
       )}
-
     </div>
   )
 }

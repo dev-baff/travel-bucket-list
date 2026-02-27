@@ -5,8 +5,7 @@ import CountryCard from './CountryCard'
 const POPULAR_COUNTRIES = ['Japan', 'France', 'Brazil', 'Australia', 'Egypt', 'Italy', 'Ghana', 'Canada']
 
 // Home page component with search bar and country cards
-function HomePage({ addToBucketList }) {
-  // State for search input, results, loading and error
+function HomePage({ addToBucketList, darkMode }) {
   const [query, setQuery] = useState('')
   const [countries, setCountries] = useState([])
   const [loading, setLoading] = useState(false)
@@ -19,7 +18,6 @@ function HomePage({ addToBucketList }) {
   useEffect(() => {
     const fetchPopular = async () => {
       try {
-        // Fetch all popular countries in parallel
         const results = await Promise.all(
           POPULAR_COUNTRIES.map((name) =>
             fetch(`https://restcountries.com/v3.1/name/${name}?fullText=true`)
@@ -41,18 +39,13 @@ function HomePage({ addToBucketList }) {
   // Fetch countries from REST Countries API based on search query
   const handleSearch = async () => {
     if (!query.trim()) return
-
     setLoading(true)
     setError('')
     setSearched(true)
 
     try {
-      const response = await fetch(
-        `https://restcountries.com/v3.1/name/${query}`
-      )
-      if (!response.ok) {
-        throw new Error('No countries found')
-      }
+      const response = await fetch(`https://restcountries.com/v3.1/name/${query}`)
+      if (!response.ok) throw new Error('No countries found')
       const data = await response.json()
       setCountries(data)
     } catch (err) {
@@ -69,13 +62,13 @@ function HomePage({ addToBucketList }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero section with search bar */}
-      <div className="bg-blue-50 py-16 px-4 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-3">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      {/* Hero section */}
+      <div className={`${darkMode ? 'bg-gray-800' : 'bg-blue-50'} py-16 px-4 text-center`}>
+        <h1 className={`text-4xl md:text-5xl font-bold mb-3 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
           Where do you want to go?
         </h1>
-        <p className="text-gray-500 font-medium mb-8">
+        <p className="text-gray-400 font-medium mb-8">
           Search for your dream destinations
         </p>
 
@@ -87,7 +80,11 @@ function HomePage({ addToBucketList }) {
             onChange={(e) => setQuery(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Search countries..."
-            className="w-full md:w-3/4 px-6 py-3 rounded-full border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className={`w-full md:w-3/4 px-6 py-3 rounded-full border shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 ${
+              darkMode
+                ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
+                : 'bg-white border-gray-200 text-gray-800'
+            }`}
           />
           <button
             onClick={handleSearch}
@@ -99,23 +96,14 @@ function HomePage({ addToBucketList }) {
       </div>
 
       <div className="container mx-auto px-4 py-10">
-        {/* Search results section */}
+        {/* Search results */}
         {searched && (
           <>
-            {/* Loading state */}
-            {loading && (
-              <p className="text-center text-gray-500 text-lg">Loading...</p>
-            )}
-
-            {/* Error message */}
-            {error && (
-              <p className="text-center text-red-500 text-lg">{error}</p>
-            )}
-
-            {/* Search results grid */}
+            {loading && <p className="text-center text-gray-400 text-lg">Loading...</p>}
+            {error && <p className="text-center text-red-500 text-lg">{error}</p>}
             {!loading && !error && countries.length > 0 && (
               <>
-                <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                <h2 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                   Search Results ({countries.length})
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -124,36 +112,31 @@ function HomePage({ addToBucketList }) {
                       key={country.cca3}
                       country={country}
                       addToBucketList={addToBucketList}
+                      darkMode={darkMode}
                     />
                   ))}
                 </div>
               </>
             )}
-
-            {/* No results message */}
             {!loading && !error && countries.length === 0 && (
-              <p className="text-center text-gray-500 text-lg">
+              <p className="text-center text-gray-400 text-lg">
                 No countries found. Try searching for something else.
               </p>
             )}
           </>
         )}
 
-        {/* Popular destinations section - shown before search */}
+        {/* Popular destinations */}
         {!searched && (
           <>
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+            <h2 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
               Popular Destinations
             </h2>
-
-            {/* Loading popular destinations */}
             {popularLoading && (
-              <p className="text-center text-gray-500 text-lg">
+              <p className="text-center text-gray-400 text-lg">
                 Loading popular destinations...
               </p>
             )}
-
-            {/* Popular destinations grid */}
             {!popularLoading && (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {popularCountries.map((country) => (
@@ -161,6 +144,7 @@ function HomePage({ addToBucketList }) {
                     key={country.cca3}
                     country={country}
                     addToBucketList={addToBucketList}
+                    darkMode={darkMode}
                   />
                 ))}
               </div>

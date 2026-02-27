@@ -1,8 +1,7 @@
-import { useState } from 'react'
 import BucketListItem from './BucketListItem'
 
 // Bucket list page showing all saved destinations with expenses and stats
-function BucketList({ bucketList, removeFromBucketList, toggleVisited, updateExpenses }) {
+function BucketList({ bucketList, removeFromBucketList, toggleVisited, updateExpenses, darkMode }) {
 
   // Calculate total budget across all destinations
   const totalBudget = bucketList.reduce((total, item) => {
@@ -14,53 +13,42 @@ function BucketList({ bucketList, removeFromBucketList, toggleVisited, updateExp
   const notVisitedCount = bucketList.filter((item) => !item.visited).length
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
+    <div className={`min-h-screen px-4 py-8 ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="container mx-auto max-w-4xl">
 
         {/* Page title */}
-        <h1 className="text-4xl font-bold text-gray-800 mb-6">
+        <h1 className={`text-4xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
           My Travel Bucket List 🌍
         </h1>
 
         {/* Summary stats card */}
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-8">
+        <div className={`rounded-lg border shadow-sm p-6 mb-8 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            {/* Total destinations */}
-            <p className="font-semibold text-gray-800">
+            <p className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
               {bucketList.length} Destinations
             </p>
-
-            {/* Total budget */}
-            <p className="font-semibold text-gray-800">
+            <p className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
               Total Budget: ${totalBudget.toLocaleString()}
             </p>
-
-            {/* Visited and not visited counts */}
             <div className="flex items-center gap-3">
-              <p className="text-green-500 font-semibold">
-                ✓ {visitedCount} Visited
-              </p>
-              <span className="text-gray-300">|</span>
-              <p className="text-gray-600 font-semibold">
+              <p className="text-green-500 font-semibold">✓ {visitedCount} Visited</p>
+              <span className="text-gray-400">|</span>
+              <p className={`font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                 ○ {notVisitedCount} Not Visited
               </p>
             </div>
           </div>
         </div>
 
-        {/* Empty state message */}
+        {/* Empty state */}
         {bucketList.length === 0 && (
           <div className="text-center py-16">
-            <p className="text-gray-400 text-xl mb-4">
-              Your bucket list is empty!
-            </p>
-            <p className="text-gray-400">
-              Search for countries and add them to your bucket list.
-            </p>
+            <p className="text-gray-400 text-xl mb-4">Your bucket list is empty!</p>
+            <p className="text-gray-400">Search for countries and add them to your bucket list.</p>
           </div>
         )}
 
-        {/* List of bucket list items */}
+        {/* Bucket list items */}
         <div className="flex flex-col gap-6">
           {bucketList.map((item) => (
             <BucketListItem
@@ -69,6 +57,7 @@ function BucketList({ bucketList, removeFromBucketList, toggleVisited, updateExp
               removeFromBucketList={removeFromBucketList}
               toggleVisited={toggleVisited}
               updateExpenses={updateExpenses}
+              darkMode={darkMode}
             />
           ))}
         </div>

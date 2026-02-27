@@ -13,10 +13,26 @@ function App() {
     return saved ? JSON.parse(saved) : []
   })
 
+  // Load dark mode preference from localStorage
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem('darkMode') === 'true'
+  })
+
   // Save bucket list to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('bucketList', JSON.stringify(bucketList))
   }, [bucketList])
+
+  // Save dark mode preference to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('darkMode', darkMode)
+    // Apply dark mode class to the root html element
+    if (darkMode) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [darkMode])
 
   // Add a country to the bucket list if it doesn't already exist
   const addToBucketList = (country) => {
@@ -50,25 +66,29 @@ function App() {
 
   return (
     <Router>
-      {/* Flex column layout to push footer to bottom */}
-      <div className="flex flex-col min-h-screen">
+      {/* Apply dark mode class to root div */}
+      <div className={`flex flex-col min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
         {/* Header shown on all pages */}
-        <Header bucketListCount={bucketList.length} />
-        
+        <Header
+          bucketListCount={bucketList.length}
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+        />
+
         {/* Main content grows to fill available space */}
         <main className="flex-grow">
           <Routes>
             {/* Home page - search and browse countries */}
-            <Route path="/" element={<HomePage addToBucketList={addToBucketList} />} />
+            <Route path="/" element={<HomePage addToBucketList={addToBucketList} darkMode={darkMode} />} />
             {/* Destination detail page - view country info and photos */}
-            <Route path="/destination/:id" element={<DestinationDetails addToBucketList={addToBucketList} />} />
+            <Route path="/destination/:id" element={<DestinationDetails addToBucketList={addToBucketList} darkMode={darkMode} />} />
             {/* Bucket list page - manage saved destinations and expenses */}
-            <Route path="/bucket-list" element={<BucketList bucketList={bucketList} removeFromBucketList={removeFromBucketList} toggleVisited={toggleVisited} updateExpenses={updateExpenses} />} />
+            <Route path="/bucket-list" element={<BucketList bucketList={bucketList} removeFromBucketList={removeFromBucketList} toggleVisited={toggleVisited} updateExpenses={updateExpenses} darkMode={darkMode} />} />
           </Routes>
         </main>
 
         {/* Footer shown on all pages */}
-        <Footer />
+        <Footer darkMode={darkMode} />
       </div>
     </Router>
   )

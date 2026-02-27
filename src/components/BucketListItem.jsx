@@ -1,12 +1,11 @@
 import { useState } from 'react'
 
 // Individual bucket list item showing country info, expenses and action buttons
-function BucketListItem({ item, removeFromBucketList, toggleVisited, updateExpenses }) {
-  // Local state for editing expenses
+function BucketListItem({ item, removeFromBucketList, toggleVisited, updateExpenses, darkMode }) {
   const [expenses, setExpenses] = useState(item.expenses)
   const [editing, setEditing] = useState(false)
 
-  // Calculate total expenses for this destination
+  // Calculate total expenses
   const total = expenses.flight + expenses.accommodation + expenses.activities
 
   // Handle expense input changes
@@ -14,36 +13,35 @@ function BucketListItem({ item, removeFromBucketList, toggleVisited, updateExpen
     setExpenses({ ...expenses, [e.target.name]: Number(e.target.value) })
   }
 
-  // Save updated expenses to parent state
+  // Save updated expenses
   const handleSaveExpenses = () => {
     updateExpenses(item.cca3, expenses)
     setEditing(false)
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+    <div className={`rounded-lg border shadow-sm p-6 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
       <div className="flex flex-col md:flex-row justify-between items-start gap-4">
 
         {/* Left side - flag, name and expenses */}
         <div className="flex-1">
-          {/* Country flag and name */}
           <div className="flex items-center gap-3 mb-4">
             <img
               src={item.flags.png}
               alt={`${item.name.common} flag`}
               className="w-12 h-8 object-cover rounded shadow-sm"
             />
-            <h2 className="text-xl font-bold text-gray-800">
+            <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
               {item.name.common}
             </h2>
           </div>
 
-          {/* Expenses breakdown */}
           <div className="ml-1">
-            <p className="font-semibold text-gray-800 mb-2">Expenses:</p>
+            <p className={`font-semibold mb-2 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+              Expenses:
+            </p>
 
             {editing ? (
-              // Editable expense inputs
               <div className="flex flex-col gap-2 mb-3">
                 <div className="flex items-center gap-4">
                   <label className="text-gray-400 w-32">Flight:</label>
@@ -52,7 +50,7 @@ function BucketListItem({ item, removeFromBucketList, toggleVisited, updateExpen
                     name="flight"
                     value={expenses.flight}
                     onChange={handleExpenseChange}
-                    className="border border-gray-200 rounded px-2 py-1 w-24 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    className={`border rounded px-2 py-1 w-24 focus:outline-none focus:ring-2 focus:ring-blue-300 ${darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'border-gray-200'}`}
                   />
                 </div>
                 <div className="flex items-center gap-4">
@@ -62,7 +60,7 @@ function BucketListItem({ item, removeFromBucketList, toggleVisited, updateExpen
                     name="accommodation"
                     value={expenses.accommodation}
                     onChange={handleExpenseChange}
-                    className="border border-gray-200 rounded px-2 py-1 w-24 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    className={`border rounded px-2 py-1 w-24 focus:outline-none focus:ring-2 focus:ring-blue-300 ${darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'border-gray-200'}`}
                   />
                 </div>
                 <div className="flex items-center gap-4">
@@ -72,7 +70,7 @@ function BucketListItem({ item, removeFromBucketList, toggleVisited, updateExpen
                     name="activities"
                     value={expenses.activities}
                     onChange={handleExpenseChange}
-                    className="border border-gray-200 rounded px-2 py-1 w-24 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    className={`border rounded px-2 py-1 w-24 focus:outline-none focus:ring-2 focus:ring-blue-300 ${darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'border-gray-200'}`}
                   />
                 </div>
                 <button
@@ -83,28 +81,27 @@ function BucketListItem({ item, removeFromBucketList, toggleVisited, updateExpen
                 </button>
               </div>
             ) : (
-              // Display expenses
               <div className="mb-3">
                 <div className="flex gap-8 mb-1">
                   <p className="text-gray-400 w-32">Flight:</p>
-                  <p className="text-gray-800">${expenses.flight.toLocaleString()}</p>
+                  <p className={darkMode ? 'text-gray-200' : 'text-gray-800'}>${expenses.flight.toLocaleString()}</p>
                 </div>
                 <div className="flex gap-8 mb-1">
                   <p className="text-gray-400 w-32">Accommodation:</p>
-                  <p className="text-gray-800">${expenses.accommodation.toLocaleString()}</p>
+                  <p className={darkMode ? 'text-gray-200' : 'text-gray-800'}>${expenses.accommodation.toLocaleString()}</p>
                 </div>
                 <div className="flex gap-8 mb-1">
                   <p className="text-gray-400 w-32">Activities:</p>
-                  <p className="text-gray-800">${expenses.activities.toLocaleString()}</p>
+                  <p className={darkMode ? 'text-gray-200' : 'text-gray-800'}>${expenses.activities.toLocaleString()}</p>
                 </div>
-                <hr className="my-2 w-64" />
+                <hr className={`my-2 w-64 ${darkMode ? 'border-gray-600' : ''}`} />
                 <div className="flex gap-8">
-                  <p className="text-gray-800 w-32">Total:</p>
-                  <p className="font-bold text-gray-800">${total.toLocaleString()}</p>
+                  <p className={`w-32 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>Total:</p>
+                  <p className={`font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>${total.toLocaleString()}</p>
                 </div>
                 <button
                   onClick={() => setEditing(true)}
-                  className="mt-2 text-blue-500 hover:text-blue-700 text-sm underline"
+                  className="mt-2 text-blue-500 hover:text-blue-400 text-sm underline"
                 >
                   Edit Expenses
                 </button>
@@ -113,16 +110,11 @@ function BucketListItem({ item, removeFromBucketList, toggleVisited, updateExpen
           </div>
         </div>
 
-        {/* Right side - visited badge and action buttons */}
+        {/* Right side - visited badge and buttons */}
         <div className="flex flex-col items-end gap-4">
-          {/* Visited/Not Visited badge */}
-          <span className={`px-4 py-1 rounded-full text-white text-sm font-medium ${
-            item.visited ? 'bg-green-500' : 'bg-gray-400'
-          }`}>
+          <span className={`px-4 py-1 rounded-full text-white text-sm font-medium ${item.visited ? 'bg-green-500' : 'bg-gray-400'}`}>
             {item.visited ? '✓ Visited' : '○ Not Visited'}
           </span>
-
-          {/* Action buttons */}
           <div className="flex gap-3 mt-auto">
             <button
               onClick={() => toggleVisited(item.cca3)}
